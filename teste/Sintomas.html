@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Triagem Digital</title>
+    <link rel="stylesheet" href="Sintomas.css">
+</head>
+<body>
+    <header>
+        <nav class="dropdown">
+            <button class="dropbtn">Menu</button>
+            <div class="dropdown-content">
+                <a href="Sintomas.html">Triagem de Pacientes</a>
+                <a href="paciente.html">Cadastro de Pacientes</a>
+                <a href="enfermeiro.html">Cadastro de Enfermeiros</a>
+            </div>
+        </nav>
+    </header>
+    <!-- <div>
+        <h1 id="titulo">Triagem de Pacientes</h1>
+    </div> -->
+    <div class="container">
+        <h1>Triagem de Pacientes</h1>
+
+        <fieldset>
+            <legend>Dados do Paciente</legend>
+            <div class="form-group">
+                <label for="nome">Nome Completo:</label>
+                <input type="text" id="nome" required>
+            </div>
+            <div class="form-group">
+                <label for="cpf">CPF:</label>
+                <input type="text" id="cpf" pattern="\d{3}\.?\d{3}\.?\d{3}-?\d{2}" placeholder="Ex: 123.456.789-00" required>
+            </div>
+            <div class="form-group">
+                <label for="dataNascimento">Data de Nascimento:</label>
+                <input type="date" id="dataNascimento" required>
+            </div>
+            <div class="form-group">
+                <label for="sexo">Sexo:</label>
+                <select id="sexo" required>
+                    <option value="">Selecione</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Feminino">Feminino</option>
+                    <option value="Outro">Outro</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="telefone">Telefone:</label>
+                <input type="tel" id="telefone" pattern="[0-9]{2}[0-9]{4,5}-?[0-9]{4}" placeholder="Ex: (DD) 99999-9999">
+            </div>
+        </fieldset>
+
+        <fieldset>
+            <legend>Motivo da Consulta (Principal Queixa)</legend>
+            <div class="form-group">
+                <textarea id="motivo" rows="3"></textarea>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Doenças / CID (Opcional)</legend>
+            <div class="form-group">
+                <label for="doencaSelect">Selecione uma Doença/CID:</label>
+                <select id="doencaSelect">
+                    <option value="">Nenhuma selecionada</option>
+                    </select>
+            </div>
+            <p class="info-text">Selecionar uma doença/CID pode pré-selecionar sintomas comuns.</p>
+        </fieldset>
+        <fieldset>
+            <legend>Sintomas</legend>
+            <div id="sintomas-categorias">
+                <!-- <details open> <summary>Sintomas Gerais</summary>
+                    <div class="sintoma-grid">
+                        </div>
+                </details>
+
+                <details>
+                    <summary>Dor</summary>
+                    <div class="sintoma-grid">
+                        </div>
+                </details>
+
+                <details>
+                    <summary>Gastrointestinal</summary>
+                    <div class="sintoma-grid">
+                        </div>
+                </details> -->
+
+                </div>
+            </fieldset>
+
+        <fieldset>
+            <legend>Informações Adicionais (Alergias, etc.)</legend>
+            <div class="form-group">
+                <textarea id="informacoesAdicionais" rows="2"></textarea>
+            </div>
+        </fieldset>
+
+        <div class="buttons-container">
+            <button type="submit" id="enviarDados" class="btn-primary">Enviar para Triagem</button>
+            <button type="button" id="limparForm" class="btn-secondary">Limpar Formulário</button>
+        </div>
+    </div>
+
+    <script src="Sintomas.js"></script>
+</body>
+</html>
+
