@@ -47,7 +47,7 @@ def cadastrar_paciente():
         nome = dados.get('nome')
         nascimento = dados.get('nascimento')
         cep = dados.get('cep')
-        sintomas = dados.get('sintomas')
+        # sintomas = dados.get('sintomas')
 
         conn = conectar_banco()
         cursor = conn.cursor()
@@ -59,7 +59,8 @@ def cadastrar_paciente():
         
         cursor.execute("""
                 INSERT INTO pacientes (cpf, nome, nascimento, cep)
-                VALUES (?, ?, ?, ?)""", (cpf, nome, nascimento, cep))
+                VALUES (?, ?, ?, ?)
+        """, (cpf, nome, nascimento, cep))
 
         # gravidade = sistema_especialista(sintomas) -> manda os sintomas para o S.E
 
@@ -69,6 +70,7 @@ def cadastrar_paciente():
         conn.close()
 
         return jsonify({'message': 'paciente cadastrado com sucesso'})
+        # precisa retornar a gravidade tambem {'gravidade': gravidade}
 
     except Exception as err:
         return jsonify({'erro': str(err)}), 500
@@ -77,6 +79,37 @@ def cadastrar_paciente():
 # endpoint /paciente/<cpf> -> busca do paciente pelo cpf 
 
 # endpoint /sintomas -> pacientes ja cadastrados, apenas enviar os sintomas
+@app.route('/sintomas', methods=['POST'])
+def registrar_sintomas():
+    dados = request.json
+    cpf = dados.get('cpf')
+    sintomas = dados.get('sintomas')
+
+    if not cpf or not sintomas:
+        return jsonify({'erro': 'cpf e sintomas são obrigatórios'}), 400
+
+    conn = conectar_banco()
+    cursor = conn.cursor()
+
+    cursor.execute("SELECT * FROM pacientes WHERE cpf = ?", (cpf,))
+    paciente = cursor.fetchone()
+
+    if not paciente:
+        return jsonify({'erro': 'paciente com esse cpf não cadastrado'}), 4044
+
+    # gravidade = sistema_especialista(sintomas)
+
+    # salvas os novos sintomas no historico do paciente conforme vermos oq fazer no db
+
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        'message': 'sintomas registrados com sucesso',
+        # 'gravidade': gravidade
+    })
+
 
 if __name__ == '__main__':
     app.run(debug=True)
