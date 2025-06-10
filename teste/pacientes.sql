@@ -1,8 +1,8 @@
 CREATE TABLE pacientes (
-    id SERIAL PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome VARCHAR(100) NOT NULL,
     data_nascimento DATE NOT NULL,
-    sexo CHAR(1) CHECK (sexo IN ('M', 'F')),
+    sexo CHAR(1) CHECK (sexo IN ('M', 'F','O','N')),
     cpf VARCHAR(11) UNIQUE NOT NULL,
     email VARCHAR(100),
     telefone VARCHAR(15),
@@ -10,7 +10,7 @@ CREATE TABLE pacientes (
 );
 
 CREATE TABLE medicamentos (
-    id SERIAL PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     nome VARCHAR(100) NOT NULL,
     dosagem VARCHAR(50) NOT NULL,
     via_administracao VARCHAR(50) NOT NULL,
