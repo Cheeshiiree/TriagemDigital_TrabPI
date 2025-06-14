@@ -774,4 +774,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Inicializa a criação das seções de sintomas e o preenchimento do select de doenças
     criarSecoesDeSintomas();
     preencherSelectDoencas();
+
+
+
 });
