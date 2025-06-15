@@ -7,8 +7,6 @@ app = Flask(__name__)
 def conectar_banco():
     return sqlite3.connect('banco.db') 
 
-# fazer funcao para criar tabela
-
 # TABELA APENAS PARA TESTAR A API!!! 
 def criar_tabela():
     conn = conectar_banco()
@@ -16,10 +14,20 @@ def criar_tabela():
 
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS pacientes (
-            cpf TEXT PRIMATY KEY,
+            cpf TEXT PRIMARY KEY,
             nome TEXT NOT NULL,
-            nascimento TEXT NO NULL,
+            nascimento TEXT NOT NULL,
             cep TEXT NOT NULL
+        )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS historico_sintomas (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            cpf TEXT NOT NULL,
+            sintomas TEXT NOT NULL,
+            data TEXT DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (cpf) REFERENCES pacientes(cpf)
         )
     ''')
 
@@ -53,7 +61,7 @@ def listar_pacientes():
         return jsonify(lista_pacientes)
 
     except Exception as err:
-        return jsonify({'erro':str(err)}), 500
+        return jsonify({'erro': str(err)}), 500
 
 # endpoint /paciente -> cadastro de um paciente novo
 @app.route('/paciente', methods=['POST'])
@@ -66,6 +74,9 @@ def cadastrar_paciente():
         cep = dados.get('cep')
         # sintomas = dados.get('sintomas')
 
+        if not cpf or not nome or not nascimento or not cep:
+            return jsonify({'erro': 'Todos os campos são obrigatórios'}), 400
+
         conn = conectar_banco()
         cursor = conn.cursor()
 
@@ -75,13 +86,11 @@ def cadastrar_paciente():
             return jsonify({'mensagem': 'paciente já cadastrado.'}), 400
         
         cursor.execute("""
-                INSERT INTO pacientes (cpf, nome, nascimento, cep)
-                VALUES (?, ?, ?, ?)
+            INSERT INTO pacientes (cpf, nome, nascimento, cep)
+            VALUES (?, ?, ?, ?)
         """, (cpf, nome, nascimento, cep))
 
         # gravidade = sistema_especialista(sintomas) -> manda os sintomas para o S.E
-
-        # ver se vai colocar os sintomas no banco de dados
 
         conn.commit()
         conn.close()
@@ -92,27 +101,43 @@ def cadastrar_paciente():
     except Exception as err:
         return jsonify({'erro': str(err)}), 500
 
-
 # endpoint /paciente/<cpf> -> busca do paciente pelo cpf 
 @app.route('/paciente/<cpf>', methods=['GET'])
-def buscar_pacinte_cpf(cpf):
+def buscar_paciente_cpf(cpf):
     try:
         conn = conectar_banco()
         cursor = conn.cursor()
 
+        # Buscar dados do paciente
         cursor.execute("SELECT cpf, nome, nascimento, cep FROM pacientes WHERE cpf = ?", (cpf,))
-        paciente = cursor.fetchall()
+        paciente = cursor.fetchone()
+
+        if not paciente:
+            conn.close()
+            return jsonify({'erro': 'paciente não encontrado'}), 404
+
+        # Buscar histórico de sintomas
+        cursor.execute("""
+            SELECT sintomas, data FROM historico_sintomas
+            WHERE cpf = ?
+            ORDER BY data DESC
+        """, (cpf,))
+        sintomas_historico = cursor.fetchall()
         conn.close()
 
-        if paciente:
-            return jsonify({
-                'cpf': paciente[0],
-                'nome': paciente[1],
-                'nascimento': paciente[2],
-                'cep': paciente[3]
-            })
-        else:
-            return jsonify({'erro': 'paciente não encontrado'}), 404
+        # Montar lista com os sintomas
+        lista_sintomas = [
+            {"sintomas": s[0], "data": s[1]} for s in sintomas_historico
+        ]
+
+        # Montar resposta final
+        return jsonify({
+            'cpf': paciente[0],
+            'nome': paciente[1],
+            'nascimento': paciente[2],
+            'cep': paciente[3],
+            'sintomas': lista_sintomas
+        })
 
     except Exception as err:
         return jsonify({'erro': str(err)}), 500
@@ -139,7 +164,10 @@ def registrar_sintomas():
 
         # gravidade = sistema_especialista(sintomas)
 
-        # salvas os novos sintomas no historico do paciente conforme vermos oq fazer no db
+        cursor.execute("""
+            INSERT INTO historico_sintomas (cpf, sintomas)
+            VALUES (?, ?)
+        """, (cpf, sintomas))
 
         conn.commit()
         conn.close()
