@@ -1,13 +1,12 @@
 from flask import Flask, request, jsonify
 import sqlite3
+from sistema_especialista import avaliar_sintomas
 
 app = Flask(__name__)
 
-# fazer funcao para conectar com sqlite
 def conectar_banco():
-    return sqlite3.connect('banco.db') 
+    return sqlite3.connect('banco.db', timeout=10) 
 
-# TABELA APENAS PARA TESTAR A API!!! 
 def criar_tabela():
     conn = conectar_banco()
     cursor = conn.cursor()
@@ -34,36 +33,28 @@ def criar_tabela():
     conn.commit()
     conn.close()
 
-# rotas
 @app.route('/')
 def home():
-    return 'testando api em python flask'
+    return 'API do Sistema de Triagem está funcionando!'
 
-# listar pacientes -> acessar isso apenas em um testador de api
 @app.route('/pacientes', methods=['GET'])
 def listar_pacientes():
     try:
         conn = conectar_banco()
         cursor = conn.cursor()
-
         cursor.execute("SELECT cpf, nome, nascimento, cep FROM pacientes")
         pacientes = cursor.fetchall()
         conn.close()
 
-        lista_pacientes = []
-        for paciente in pacientes:
-            lista_pacientes.append({
-                'cpf': paciente[0],
-                'nome': paciente[1],
-                'nascimento': paciente[2],
-                'cep': paciente[3]
-            })
+        lista_pacientes = [
+            {'cpf': p[0], 'nome': p[1], 'nascimento': p[2], 'cep': p[3]}
+            for p in pacientes
+        ]
         return jsonify(lista_pacientes)
 
     except Exception as err:
         return jsonify({'erro': str(err)}), 500
 
-# endpoint /paciente -> cadastro de um paciente novo
 @app.route('/paciente', methods=['POST'])
 def cadastrar_paciente():
     try: 
@@ -72,10 +63,9 @@ def cadastrar_paciente():
         nome = dados.get('nome')
         nascimento = dados.get('nascimento')
         cep = dados.get('cep')
-        # sintomas = dados.get('sintomas')
 
-        if not cpf or not nome or not nascimento or not cep:
-            return jsonify({'erro': 'Todos os campos são obrigatórios'}), 400
+        if not all([cpf, nome, nascimento, cep]):
+            return jsonify({'erro': 'Todos os campos (cpf, nome, nascimento, cep) são obrigatórios'}), 400
 
         conn = conectar_banco()
         cursor = conn.cursor()
@@ -83,104 +73,90 @@ def cadastrar_paciente():
         cursor.execute("SELECT * FROM pacientes WHERE cpf = ?", (cpf,))
         if cursor.fetchone():
             conn.close()
-            return jsonify({'mensagem': 'paciente já cadastrado.'}), 400
-        
+            return jsonify({'mensagem': 'Paciente com este CPF já está cadastrado.'}), 409
+
         cursor.execute("""
             INSERT INTO pacientes (cpf, nome, nascimento, cep)
             VALUES (?, ?, ?, ?)
         """, (cpf, nome, nascimento, cep))
 
-        # gravidade = sistema_especialista(sintomas) -> manda os sintomas para o S.E
-
         conn.commit()
         conn.close()
 
-        return jsonify({'message': 'paciente cadastrado com sucesso'})
-        # precisa retornar a gravidade tambem {'gravidade': gravidade}
+        return jsonify({'mensagem': 'Paciente cadastrado com sucesso'}), 201
 
     except Exception as err:
         return jsonify({'erro': str(err)}), 500
 
-# endpoint /paciente/<cpf> -> busca do paciente pelo cpf 
-@app.route('/paciente/<cpf>', methods=['GET'])
+@app.route('/paciente/<string:cpf>', methods=['GET'])
 def buscar_paciente_cpf(cpf):
     try:
         conn = conectar_banco()
         cursor = conn.cursor()
 
-        # Buscar dados do paciente
         cursor.execute("SELECT cpf, nome, nascimento, cep FROM pacientes WHERE cpf = ?", (cpf,))
         paciente = cursor.fetchone()
 
         if not paciente:
             conn.close()
-            return jsonify({'erro': 'paciente não encontrado'}), 404
+            return jsonify({'erro': 'Paciente não encontrado'}), 404
 
-        # Buscar histórico de sintomas
         cursor.execute("""
             SELECT sintomas, data FROM historico_sintomas
-            WHERE cpf = ?
-            ORDER BY data DESC
+            WHERE cpf = ? ORDER BY data DESC
         """, (cpf,))
         sintomas_historico = cursor.fetchall()
         conn.close()
 
-        # Montar lista com os sintomas
         lista_sintomas = [
             {"sintomas": s[0], "data": s[1]} for s in sintomas_historico
         ]
 
-        # Montar resposta final
         return jsonify({
             'cpf': paciente[0],
             'nome': paciente[1],
             'nascimento': paciente[2],
             'cep': paciente[3],
-            'sintomas': lista_sintomas
+            'historico': lista_sintomas
         })
 
     except Exception as err:
         return jsonify({'erro': str(err)}), 500
 
-# endpoint /sintomas -> pacientes ja cadastrados, apenas enviar os sintomas
 @app.route('/sintomas', methods=['POST'])
 def registrar_sintomas():
     try:
         dados = request.json
         cpf = dados.get('cpf')
         sintomas = dados.get('sintomas')
+        print(f"DEBUG [API Rota /sintomas]: Recebido CPF={cpf}, Sintomas='{sintomas}'")
 
         if not cpf or not sintomas:
-            return jsonify({'erro': 'cpf e sintomas são obrigatórios'}), 400
+            return jsonify({'erro': 'Os campos "cpf" e "sintomas" são obrigatórios'}), 400
 
         conn = conectar_banco()
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM pacientes WHERE cpf = ?", (cpf,))
-        paciente = cursor.fetchone()
+        if not cursor.fetchone():
+            conn.close()
+            return jsonify({'erro': 'Paciente com este CPF não está cadastrado'}), 404
+        
+        resultado_triagem = avaliar_sintomas(sintomas)
 
-        if not paciente:
-            return jsonify({'erro': 'paciente com esse cpf não cadastrado'}), 404
-
-        # gravidade = sistema_especialista(sintomas)
-
-        cursor.execute("""
-            INSERT INTO historico_sintomas (cpf, sintomas)
-            VALUES (?, ?)
-        """, (cpf, sintomas))
-
+        cursor.execute("INSERT INTO historico_sintomas (cpf, sintomas) VALUES (?, ?)", (cpf, sintomas))
         conn.commit()
         conn.close()
 
         return jsonify({
-            'message': 'sintomas registrados com sucesso',
-            # 'gravidade': gravidade
+            'mensagem': 'Sintomas registrados com sucesso',
+            'resultado_triagem': resultado_triagem
         })
     
     except Exception as err:
-        return jsonify({'error': str(err)}), 500
+        return jsonify({'erro': str(err)}), 500
 
 
 if __name__ == '__main__':
     criar_tabela()
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
