@@ -39,3 +39,39 @@ form.addEventListener("submit", async (e) => {
         alert("Erro na conexão com o servidor.");
     }
 });
+
+async function buscarPacientePorCPF() {
+    const cpf = document.getElementById("cpf").value.trim();
+
+    if (!cpf) return;
+
+    try {
+        const res = await fetch(`http://127.0.0.1:5000/paciente/${cpf}`);
+
+        if (!res.ok) {
+            console.log("Paciente não encontrado ou erro na API.");
+            return;
+        }
+
+        const data = await res.json();
+
+        document.getElementById("nome").value = data.nome || "";
+        document.getElementById("nascimento").value = data.nascimento || "";
+        document.getElementById("cep").value = data.cep || "";
+        document.getElementById("telefone").value = data.telefone || "";
+
+        const generoMap = {
+            feminino: "feminino",
+            masculino: "masculino",
+            outro: "outro",
+            "prefiro não informar": "nao_informar",
+        };
+
+        const generoValue = generoMap[data.sexo.toLowerCase()];
+        if (generoValue) {
+            document.querySelector(`input[name="genero"][value="${generoValue}"]`).checked = true;
+        }
+    } catch (err) {
+        console.log("err: " + err);
+    }
+}
