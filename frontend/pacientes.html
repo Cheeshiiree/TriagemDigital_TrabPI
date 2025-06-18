@@ -7,17 +7,6 @@
         <title>Cadastro do Paciente</title>
     </head>
     <body>
-        <header>
-            <nav class="dropdown">
-                <button class="dropbtn">Menu</button>
-                <div class="dropdown-content">
-                    <a href="Sintomas.html">Triagem de Pacientes</a>
-                    <a href="paciente.html">Cadastro de Pacientes</a>
-                    <a href="enfermeiro.html">Cadastro de Enfermeiros</a>
-                </div>
-            </nav>
-        </header>
-
         <main>
             <section>
                 <h1 id="titulo">Cadastro do Paciente</h1>
@@ -50,46 +39,117 @@
                     <input type="date" name="nascimento" id="nascimento" required />
                 </fieldset>
 
-                <!-- Endereço Simplificado -->
+                <!-- Endereço -->
                 <fieldset class="grupo">
                     <legend>Endereço</legend>
-
                     <label for="cep">CEP</label>
                     <input type="text" name="cep" id="cep" placeholder="00000-000" maxlength="9" required />
                 </fieldset>
 
-                <!-- Informações Médicas -->
-                <!-- <fieldset class="grupo">
-                    <legend>Informações Médicas</legend>
-
-                    <label>Possui alergia a algum medicamento?</label>
-                    <div class="opcoes">
-                        <label><input type="radio" name="tem_alergia" value="sim" checked /> Sim</label>
-                        <label><input type="radio" name="tem_alergia" value="nao" /> Não</label>
-                    </div>
-
-                    <label for="alergia">Se sim, qual?</label>
-                    <input type="text" name="alergia" id="alergia" />
-
-                    <label>Faz uso de medicação controlada?</label>
-                    <div class="opcoes">
-                        <label><input type="radio" name="usa_medicacao" value="sim" /> Sim</label>
-                        <label><input type="radio" name="usa_medicacao" value="nao" checked /> Não</label>
-                    </div>
-
-                    <label for="medicamento">Se sim, qual?</label>
-                    <input type="text" name="medicamento" id="medicamento" />
-
-                    <label for="observacoes">Deseja informar algum outro problema?</label>
-                    <input type="text" name="observacoes" id="observacoes" />
-                </fieldset> -->
-
-                <!-- Botão -->
+                <!-- Sintomas (Gerados Dinamicamente) -->
+                <fieldset class="grupo">
+                    <legend>Sintomas</legend>
+                    <div id="sintomasCategorias"></div>
+                </fieldset>
                 <div>
                     <button type="submit" class="botao">Cadastrar</button>
                 </div>
             </form>
         </main>
+
         <script src="src/integracao_api.js"></script>
+        <script>
+            // Categorias de sintomas com sintomas associados
+            const sintomasPorCategoria = {
+                "Sintomas Gerais": ["Dor de Cabeça", "Febre", "Cansaço", "Tontura", "Perda de Apetite", "Insônia", "Fadiga", "Mal-estar Geral"],
+                Dor: ["Dor Abdominal", "Dor no Peito", "Dor nas Articulações", "Dor de Garganta", "Dor nas Costas", "Dor de Dente"],
+            };
+
+            const sintomasCategoriasDiv = document.getElementById("sintomasCategorias");
+
+            function criarSecoesDeSintomas() {
+                for (const categoria in sintomasPorCategoria) {
+                    const details = document.createElement("details");
+                    if (categoria === "Sintomas Gerais") details.open = true;
+
+                    const summary = document.createElement("summary");
+                    summary.textContent = categoria;
+                    details.appendChild(summary);
+
+                    const sintomaGrid = document.createElement("div");
+                    sintomaGrid.classList.add("sintoma-grid");
+                    details.appendChild(sintomaGrid);
+
+                    sintomasPorCategoria[categoria].forEach((sintomaNome) => {
+                        const wrapper = document.createElement("div");
+                        wrapper.classList.add("sintoma-item-wrapper");
+
+                        // Checkbox
+                        const checkbox = document.createElement("input");
+                        checkbox.type = "checkbox";
+                        checkbox.id = `sintoma-${sintomaNome.replace(/\s+/g, "-")}`;
+                        checkbox.name = "sintomas";
+                        checkbox.value = sintomaNome;
+
+                        const label = document.createElement("label");
+                        label.htmlFor = checkbox.id;
+                        label.textContent = sintomaNome;
+
+                        const checkboxContainer = document.createElement("div");
+                        checkboxContainer.classList.add("sintoma-checkbox-container");
+                        checkboxContainer.appendChild(checkbox);
+                        checkboxContainer.appendChild(label);
+
+                        wrapper.appendChild(checkboxContainer);
+
+                        // Slider (gravidade)
+                        const sliderContainer = document.createElement("div");
+                        sliderContainer.classList.add("gravidade-slider-container");
+                        sliderContainer.style.display = "none";
+
+                        const sliderLabel = document.createElement("label");
+                        sliderLabel.textContent = "Gravidade (1-10):";
+
+                        const slider = document.createElement("input");
+                        slider.type = "range";
+                        slider.min = "1";
+                        slider.max = "10";
+                        slider.value = "5";
+                        slider.id = `gravidade-${sintomaNome.replace(/\s+/g, "-")}`;
+                        slider.name = `gravidade-${sintomaNome.replace(/\s+/g, "-")}`;
+
+                        const gravidadeValueSpan = document.createElement("span");
+                        gravidadeValueSpan.classList.add("gravidade-value");
+                        gravidadeValueSpan.textContent = slider.value;
+
+                        slider.addEventListener("input", () => {
+                            gravidadeValueSpan.textContent = slider.value;
+                        });
+
+                        sliderContainer.appendChild(sliderLabel);
+                        sliderContainer.appendChild(slider);
+                        sliderContainer.appendChild(gravidadeValueSpan);
+                        wrapper.appendChild(sliderContainer);
+
+                        // Mostrar/ocultar slider
+                        checkbox.addEventListener("change", () => {
+                            if (checkbox.checked) {
+                                sliderContainer.style.display = "flex";
+                            } else {
+                                sliderContainer.style.display = "none";
+                                slider.value = "5";
+                                gravidadeValueSpan.textContent = "5";
+                            }
+                        });
+
+                        sintomaGrid.appendChild(wrapper);
+                    });
+
+                    sintomasCategoriasDiv.appendChild(details);
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", criarSecoesDeSintomas);
+        </script>
     </body>
 </html>
