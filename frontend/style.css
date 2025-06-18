@@ -22,6 +22,7 @@ header {
     color: #fff;
     display: flex;
     justify-content: flex-start;
+    margin-bottom: 20px; /* Adicionado para separar o header do main */
 }
 
 /* Dropdown Menu */
@@ -71,7 +72,6 @@ main {
     width: 100%;
     max-width: 750px;
     text-align: center;
-    margin-top: 30px;
 }
 
 #titulo {
@@ -106,6 +106,9 @@ legend {
     font-size: 18px;
     color: #444;
     margin-bottom: 10px;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #eee;
+    width: 100%;
 }
 
 /* Labels e Inputs */
@@ -150,6 +153,7 @@ select:focus {
     margin-right: 20px;
     font-weight: normal;
     color: #555;
+    margin-top: 0; /* Reseta a margem para labels de radio */
 }
 
 /* Botão */
@@ -167,4 +171,112 @@ select:focus {
 
 .botao:hover {
     background-color: #0056b3;
+}
+
+/* ================================================= */
+/* === CSS PARA A SEÇÃO DE SINTOMAS (ADICIONADO) === */
+/* ================================================= */
+
+/* Grid para organizar os sintomas */
+.sintoma-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+    margin-top: 10px;
+}
+
+/* Container para cada item de sintoma (checkbox + slider) */
+.sintoma-item-wrapper {
+    border: 1px solid #e0e0e0;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Alinha o checkbox e seu texto */
+.sintoma-checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Remove a margem extra do label dentro do container do checkbox */
+.sintoma-checkbox-container label {
+    margin: 0;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 0;
+}
+
+/* Container para o slider de gravidade */
+.gravidade-slider-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 5px;
+}
+
+/* Remove a margem extra do label do slider */
+.gravidade-slider-container label {
+    margin: 0;
+    font-size: 14px;
+    color: #555;
+    white-space: nowrap;
+}
+
+/* Estilo para o slider */
+.gravidade-slider-container input[type="range"] {
+    flex-grow: 1;
+    margin: 0;
+    padding: 0;
+}
+
+/* Mostra o valor da gravidade */
+.gravidade-value {
+    font-weight: bold;
+    color: #007bff;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* Estilos para a tag <details> e <summary> */
+details {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    text-align: left;
+}
+
+summary {
+    font-weight: bold;
+    font-size: 1.1rem;
+    padding: 15px;
+    background-color: #f0f0f0;
+    cursor: pointer;
+    outline: none;
+    list-style: none;
+}
+
+summary::before {
+    content: "▶";
+    margin-right: 10px;
+    display: inline-block;
+    transition: transform 0.2s;
+}
+
+details[open] > summary::before {
+    transform: rotate(90deg);
+}
+
+summary::-webkit-details-marker {
+    display: none;
 }

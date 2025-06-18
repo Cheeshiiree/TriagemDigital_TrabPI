@@ -4,34 +4,31 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="stylesheet" href="style.css" />
-        <title>Cadastro do Paciente</title>
+        <title>Triagem e Cadastro do Paciente</title>
     </head>
     <body>
         <header>
             <nav class="dropdown">
                 <button class="dropbtn">Menu</button>
                 <div class="dropdown-content">
-                    <a href="Sintomas.html">Triagem de Pacientes</a>
-                    <a href="paciente.html">Cadastro de Pacientes</a>
-                    <a href="enfermeiro.html">Cadastro de Enfermeiros</a>
+                    <a href="#">Triagem de Pacientes</a>
+                    <a href="#">Cadastro de Pacientes</a>
+                    <a href="#">Cadastro de Enfermeiros</a>
                 </div>
             </nav>
         </header>
-
         <main>
             <section>
-                <h1 id="titulo">Cadastro do Paciente</h1>
-                <p id="subtitulo">Preencha as informações</p>
+                <h1 id="titulo">Triagem do Paciente</h1>
+                <p id="subtitulo">Preencha as informações e sintomas</p>
             </section>
 
             <form id="form" method="post">
                 <!-- Informações Pessoais -->
                 <fieldset class="grupo">
                     <legend>Informações Pessoais</legend>
-
                     <label for="nome">Nome Completo</label>
                     <input type="text" name="nome" id="nome" required />
-
                     <label>Gênero</label>
                     <div class="opcoes">
                         <label><input type="radio" name="genero" value="feminino" checked /> Feminino</label>
@@ -39,62 +36,36 @@
                         <label><input type="radio" name="genero" value="outro" /> Outro</label>
                         <label><input type="radio" name="genero" value="nao_informar" /> Prefiro não informar</label>
                     </div>
-
                     <label for="cpf">CPF</label>
                     <input type="text" name="cpf" id="cpf" maxlength="14" required onblur="buscarPacientePorCPF()" />
-
                     <label for="telefone">Telefone</label>
                     <input type="tel" name="telefone" id="telefone" placeholder="(35) 99999-9999" required />
-
                     <label for="nascimento">Data de Nascimento</label>
                     <input type="date" name="nascimento" id="nascimento" required />
                 </fieldset>
 
-                <!-- Endereço Simplificado -->
+                <!-- Endereço -->
                 <fieldset class="grupo">
                     <legend>Endereço</legend>
-
                     <label for="cep">CEP</label>
                     <input type="text" name="cep" id="cep" placeholder="00000-000" maxlength="9" required />
                 </fieldset>
 
-                <!-- Informações Médicas -->
-                <!-- <fieldset class="grupo">
-                    <legend>Informações Médicas</legend>
+                <!-- Sintomas (Gerados Dinamicamente) -->
+                <fieldset class="grupo">
+                    <legend>Sintomas</legend>
+                    <div id="sintomasCategorias"></div>
+                </fieldset>
 
-                    <label>Possui alergia a algum medicamento?</label>
-                    <div class="opcoes">
-                        <label><input type="radio" name="tem_alergia" value="sim" checked /> Sim</label>
-                        <label><input type="radio" name="tem_alergia" value="nao" /> Não</label>
-                    </div>
-
-                    <label for="alergia">Se sim, qual?</label>
-                    <input type="text" name="alergia" id="alergia" />
-
-                    <label>Faz uso de medicação controlada?</label>
-                    <div class="opcoes">
-                        <label><input type="radio" name="usa_medicacao" value="sim" /> Sim</label>
-                        <label><input type="radio" name="usa_medicacao" value="nao" checked /> Não</label>
-                    </div>
-
-                    <label for="medicamento">Se sim, qual?</label>
-                    <input type="text" name="medicamento" id="medicamento" />
-
-                    <label for="observacoes">Deseja informar algum outro problema?</label>
-                    <input type="text" name="observacoes" id="observacoes" />
-                </fieldset> -->
-
-                <!-- Botão -->
                 <div>
-                    <button type="submit" class="botao">Cadastrar</button>
+                    <button type="submit" class="botao">Cadastrar e Classificar</button>
                 </div>
             </form>
         </main>
+
         <script src="src/integracao_api.js"></script>
-<<<<<<< Updated upstream
-=======
+
         <script>
-            // Categorias de sintomas com sintomas associados
             const sintomasPorCategoria = {
                 "Sinais de Alerta Imediato": ["Dificuldade para Respirar", "Dor no Peito", "Alteração de Consciência", "Convulsão ou Ataque Epilético", "Sangramento Excessivo"],
                 "Sintomas Gerais": ["Febre", "Cansaço", "Fadiga", "Tontura", "Mal-estar Geral", "Perda de Apetite", "Insônia"],
@@ -103,12 +74,13 @@
                 "Sintomas Gastrointestinais": ["Vômito", "Diarreia", "Náusea"],
                 Outros: ["Pressão Alta", "Queimadura", "Reação Alérgica"],
             };
+
             const sintomasCategoriasDiv = document.getElementById("sintomasCategorias");
 
             function criarSecoesDeSintomas() {
                 for (const categoria in sintomasPorCategoria) {
                     const details = document.createElement("details");
-                    if (categoria === "Sintomas Gerais") details.open = true;
+                    if (categoria === "Sinais de Alerta Imediato") details.open = true;
 
                     const summary = document.createElement("summary");
                     summary.textContent = categoria;
@@ -122,7 +94,6 @@
                         const wrapper = document.createElement("div");
                         wrapper.classList.add("sintoma-item-wrapper");
 
-                        // Checkbox
                         const checkbox = document.createElement("input");
                         checkbox.type = "checkbox";
                         checkbox.id = `sintoma-${sintomaNome.replace(/\s+/g, "-")}`;
@@ -137,10 +108,8 @@
                         checkboxContainer.classList.add("sintoma-checkbox-container");
                         checkboxContainer.appendChild(checkbox);
                         checkboxContainer.appendChild(label);
-
                         wrapper.appendChild(checkboxContainer);
 
-                        // Slider (gravidade)
                         const sliderContainer = document.createElement("div");
                         sliderContainer.classList.add("gravidade-slider-container");
                         sliderContainer.style.display = "none";
@@ -169,7 +138,6 @@
                         sliderContainer.appendChild(gravidadeValueSpan);
                         wrapper.appendChild(sliderContainer);
 
-                        // Mostrar/ocultar slider
                         checkbox.addEventListener("change", () => {
                             if (checkbox.checked) {
                                 sliderContainer.style.display = "flex";
@@ -189,6 +157,5 @@
 
             document.addEventListener("DOMContentLoaded", criarSecoesDeSintomas);
         </script>
->>>>>>> Stashed changes
     </body>
 </html>
