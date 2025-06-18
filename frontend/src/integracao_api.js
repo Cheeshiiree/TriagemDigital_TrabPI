@@ -30,7 +30,25 @@ form.addEventListener("submit", async (e) => {
         const data = await res.json();
 
         if (res.ok) {
+<<<<<<< Updated upstream
             alert(data.mensagem || "Paciente cadastrado com sucesso!");
+=======
+            const prioridade = data.prioridade;
+
+            const mensagem_alerta = `Paciente cadastrado com sucesso!
+            
+            --- CLASSIFICAÇÃO DE RISCO ---
+            Prioridade: ${prioridade.cor} ${prioridade.prioridade}
+            Tempo de Espera Estimado: ${prioridade.tempo_espera}`;
+
+            alert(mensagem_alerta);
+
+            form.reset();
+            document.querySelectorAll('input[name="sintomas"]:checked').forEach((cb) => {
+                cb.checked = false;
+                cb.dispatchEvent(new Event("change"));
+            });
+>>>>>>> Stashed changes
         } else {
             alert(data.erro || "Erro ao cadastrar paciente.");
         }

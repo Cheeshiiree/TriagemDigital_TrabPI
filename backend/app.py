@@ -1,6 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3
+<<<<<<< Updated upstream
+=======
+import json 
+from sistema_especialista import classificar_prioridade
+>>>>>>> Stashed changes
 
 app = Flask(__name__)
 CORS(app)
@@ -29,6 +34,7 @@ def criar_tabela():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             cpf TEXT NOT NULL,
             sintomas TEXT NOT NULL,
+            prioridade_classificacao TEXT NOT NULL,
             data TEXT DEFAULT CURRENT_TIMESTAMP,
             FOREIGN KEY (cpf) REFERENCES pacientes(cpf)
         )
@@ -47,6 +53,7 @@ def listar_pacientes():
         conn = conectar_banco()
         cursor = conn.cursor()
 
+<<<<<<< Updated upstream
         cursor.execute("SELECT cpf, nome, nascimento, cep, fone, sexo FROM pacientes")
         pacientes = cursor.fetchall()
         conn.close()
@@ -62,6 +69,44 @@ def listar_pacientes():
                 'sexo': paciente[5]
             })
         return jsonify(lista_pacientes), 200
+=======
+        cursor.execute("SELECT cpf, nome, nascimento, sexo, fone, cep FROM pacientes")
+        lista_de_pacientes_tuplas = cursor.fetchall()
+        
+        resultado_final = []
+
+        for paciente_atual in lista_de_pacientes_tuplas:
+            cpf_do_paciente = paciente_atual[0] 
+
+            cursor.execute(
+                "SELECT sintomas, data, prioridade_classificacao FROM historico_sintomas WHERE cpf = ? ORDER BY data DESC",
+                (cpf_do_paciente,)
+            )
+            historico_tuplas = cursor.fetchall()
+            
+            historico_formatado = []
+            for registro in historico_tuplas:
+                historico_formatado.append({
+                    'data_do_registro': registro[1],
+                    'sintomas_registrados': json.loads(registro[0]),
+                    'classificacao': registro[2]
+                })
+
+            paciente_dicionario = {
+                'cpf': cpf_do_paciente,
+                'nome': paciente_atual[1],
+                'nascimento': paciente_atual[2],
+                'sexo': paciente_atual[3],
+                'telefone': paciente_atual[4], 
+                'cep': paciente_atual[5],
+                'historico_sintomas': historico_formatado 
+            }
+            resultado_final.append(paciente_dicionario)
+
+        conn.close()
+        json_string = json.dumps(resultado_final, ensure_ascii=False, indent=2)
+        return Response(json_string, mimetype='application/json; charset=utf-8'), 200
+>>>>>>> Stashed changes
 
     except Exception as err:
         return jsonify({'erro': str(err)}), 500
@@ -80,10 +125,13 @@ def cadastrar_paciente():
         if not cpf or not nome or not nascimento or not cep or not telefone or not sexo:
             return jsonify({'erro': 'Todos os campos são obrigatórios'}), 400
 
+        resultado_triagem = classificar_prioridade(sintomas)
+
         conn = conectar_banco()
         cursor = conn.cursor()
 
         cursor.execute("SELECT * FROM pacientes WHERE cpf = ?", (cpf,))
+<<<<<<< Updated upstream
         if cursor.fetchone():
             conn.close()
             return jsonify({'mensagem': 'Paciente já cadastrado.'}), 400
@@ -92,12 +140,39 @@ def cadastrar_paciente():
             INSERT INTO pacientes (cpf, nome, nascimento, cep, fone, sexo)
             VALUES (?, ?, ?, ?, ?, ?)
         """, (cpf, nome, nascimento, cep, telefone, sexo))
+=======
+        if not cursor.fetchone():
+            cursor.execute("""
+                INSERT INTO pacientes (cpf, nome, nascimento, cep, fone, sexo)
+                VALUES (?, ?, ?, ?, ?, ?)
+            """, (cpf, nome, nascimento, cep, telefone, sexo))
+
+        if sintomas:
+            prioridade_para_db = resultado_triagem['prioridade']
+            sintomas_em_texto = json.dumps(sintomas, ensure_ascii=False)
+            
+            cursor.execute("""
+                INSERT INTO historico_sintomas (cpf, sintomas, prioridade_classificacao)
+                VALUES (?, ?, ?)
+            """, (cpf, sintomas_em_texto, prioridade_para_db))
+>>>>>>> Stashed changes
 
         conn.commit()
         conn.close()
 
+<<<<<<< Updated upstream
         return jsonify({'mensagem': 'Paciente cadastrado com sucesso'}), 201
 
+=======
+        resposta_completa = {
+            'mensagem': 'Paciente e sintomas cadastrados com sucesso!',
+            'dados_paciente': dados,
+            'prioridade': resultado_triagem  
+        }
+        
+        return jsonify(resposta_completa), 201
+    
+>>>>>>> Stashed changes
     except Exception as err:
         return jsonify({'erro': str(err)}), 500
 
