@@ -2,9 +2,9 @@
 
 ![alt text](https://img.shields.io/badge/status-ongoing-orange)
 
-![alt text](https://img.shields.io/badge/Python-3.9%2B-blue.svg)
+![alt text](https://img.shields.io/badge/Python-3.x%2B-blue.svg)
 
-![alt text](https://img.shields.io/badge/Flask-2.2.2-black.svg)
+![alt text](https://img.shields.io/badge/Flask-3.1.1-black.svg)
 
 O Triagem Digital é um projeto acadêmico que apresenta um sistema para otimizar, agilizar e padronizar o processo de triagem de pacientes em Unidades Básicas de Saúde (UBS).
 ## Problema
