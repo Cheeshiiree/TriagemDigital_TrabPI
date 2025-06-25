@@ -17,7 +17,7 @@ O processo de triagem em muitas Unidades Básicas de Saúde (UBS) ainda é reali
 - **Perda de Histórico**: Dificuldade em acessar rapidamente o histórico de sintomas de um paciente em visitas anteriores.
 ## Solução
 
-Para solucionar este problema, desenvolvemos o Triagem Digital, um sistema web que digitaliza e automatiza a classificação de risco dos pacientes. A enfermeira ou profissional de saúde insere os dados e sintomas do paciente em uma interface simples, e nosso sistema especialista, baseado no Protocolo de Manchester (MTS), determina o grau de prioridade do atendimento de forma instantânea.
+Para solucionar este problema, desenvolvemos o Triagem Digital, um sistema web que digitaliza e automatiza a classificação de risco dos pacientes. O profissional de saúde responsável insere os dados e sintomas do paciente em uma interface simples, e o nosso sistema especialista, baseado no Protocolo de Manchester (MTS), determina o grau de prioridade do atendimento de forma instantânea.
 ## Funcionalidades
 
 - **Cadastro de Pacientes:** Registro rápido de novos pacientes.
@@ -27,9 +27,9 @@ Para solucionar este problema, desenvolvemos o Triagem Digital, um sistema web q
 - **Histórico de Pacientes:** Todos os atendimentos e sintomas são armazenados no banco de dados para consulta futura.
 ## Fluxo do Sistema
 
-- Frontend (Interface da Enfermeira): A enfermeira acessa a página web (index.html).
+- Frontend (Interface do prossional): O profissional acessa a página web (index.html).
 
-- Entrada de Dados: Ela preenche o formulário com os dados e sintomas do paciente.
+- Entrada de Dados: Preenche o formulário com os dados e sintomas do paciente.
 
 - Requisição à API: Ao clicar em "Cadastrar", o JavaScript envia os dados para a nossa API em Flask.
 
@@ -44,7 +44,7 @@ Para solucionar este problema, desenvolvemos o Triagem Digital, um sistema web q
 **Classificação de Risco:**
 
 - O Sistema Especialista (Python) aplica as regras do Protocolo de Manchester e determina o nível de prioridade.
-- Ele retorna o resultado da classificação para a API.
+- Retorna o resultado da classificação para a API.
 
 **Resposta ao Frontend:**
 
