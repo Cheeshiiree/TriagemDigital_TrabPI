@@ -1,6 +1,6 @@
 # Triagem Digital - Sistema de Otimização para UBS
 
-![alt text](https://img.shields.io/badge/status-ongoing-orange)
+![alt text](https://img.shields.io/badge/status-completed-green)
 
 ![alt text](https://img.shields.io/badge/Python-3.x%2B-blue.svg)
 
