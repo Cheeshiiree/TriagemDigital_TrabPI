@@ -9,7 +9,7 @@
     <body>
         <header>
             <nav class="dropdown">
-                <button class="dropbtn">Menu</button>
+                <!-- <button class="dropbtn">Menu</button> -->
                 <div class="dropdown-content">
                     <a href="#">Triagem de Pacientes</a>
                     <a href="#">Cadastro de Pacientes</a>
@@ -24,7 +24,6 @@
             </section>
 
             <form id="form" method="post">
-                <!-- Informações Pessoais -->
                 <fieldset class="grupo">
                     <legend>Informações Pessoais</legend>
                     <label for="nome">Nome Completo</label>
@@ -44,14 +43,12 @@
                     <input type="date" name="nascimento" id="nascimento" required />
                 </fieldset>
 
-                <!-- Endereço -->
                 <fieldset class="grupo">
                     <legend>Endereço</legend>
                     <label for="cep">CEP</label>
                     <input type="text" name="cep" id="cep" placeholder="00000-000" maxlength="9" required />
                 </fieldset>
 
-                <!-- Sintomas (Gerados Dinamicamente) -->
                 <fieldset class="grupo">
                     <legend>Sintomas</legend>
                     <div id="sintomasCategorias"></div>

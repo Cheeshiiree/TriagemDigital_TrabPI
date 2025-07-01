@@ -1,15 +1,5 @@
 # sistema_especialista.py
 
-"""
-Sistema Especialista para Triagem de Pacientes - Protocolo de Manchester (MTS)
-
-AVISO IMPORTANTE:
-Este código é um exemplo didático e uma simulação simplificada do Protocolo de Manchester.
-As regras aqui implementadas DEVEM ser revisadas, validadas e ajustadas por
-profissionais de saúde qualificados (médicos e enfermeiros) antes de serem
-utilizadas em um ambiente clínico real. A segurança do paciente é a maior prioridade.
-"""
-
 # Definindo as classificações do Protocolo de Manchester
 CLASSIFICACOES = {
     "vermelho": {"prioridade": "Emergência", "cor": "🔴", "tempo_espera": "Atendimento imediato"},
