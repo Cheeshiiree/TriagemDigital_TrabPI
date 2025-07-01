@@ -3,280 +3,283 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: Arial, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
 body {
-    background-color: #f7f7f7;
+    background-color: #f0f2f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Cabeçalho Principal */
+.main-header {
     display: flex;
-    flex-direction: column;
     align-items: center;
-    padding: 20px;
-    min-height: 100vh;
-}
-
-header {
-    width: 100%;
-    background-color: #007bff;
+    justify-content: space-between;
     padding: 10px 20px;
-    color: #fff;
+    background-color: #fff;
+    border-bottom: 1px solid #dee2e6;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.logo-container {
     display: flex;
-    justify-content: flex-start;
-    margin-bottom: 20px; /* Adicionado para separar o header do main */
+    align-items: center;
 }
 
-/* Dropdown Menu */
-.dropbtn {
-    background-color: #0056b3;
-    color: white;
-    padding: 10px 16px;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    border-radius: 5px;
+.logo {
+    height: 40px;
+    margin-right: 15px;
 }
 
-.dropdown {
-    position: relative;
-    display: inline-block;
+.main-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
 }
 
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: white;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-    min-width: 220px;
-    z-index: 1;
-    border-radius: 5px;
+.main-nav li {
+    margin-left: 10px;
 }
 
-.dropdown-content a {
-    color: black;
-    padding: 12px 16px;
+.nav-button {
+    display: block;
+    padding: 8px 15px;
+    color: #495057;
     text-decoration: none;
-    display: block;
-    border-bottom: 1px solid #eee;
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+    font-weight: 500;
 }
 
-.dropdown:hover .dropdown-content {
-    display: block;
+.nav-button:hover {
+    background-color: #e9ecef;
+    color: #212529;
 }
 
-.dropdown-content a:hover {
-    background-color: #f1f1f1;
+#logout-btn {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+#logout-btn:hover {
+    background-color: #c82333;
+}
+
+.user-info {
+    color: #495057;
+    font-weight: bold;
+    margin-right: 15px;
+}
+
+/* Conteúdo Principal */
+main {
+    padding: 20px;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 /* Títulos */
-main {
-    width: 100%;
-    max-width: 750px;
+h1, h2, h3 {
+    color: #1d3557;
+    margin-bottom: 15px;
+}
+
+h1 {
     text-align: center;
-}
-
-#titulo {
-    font-size: 32px;
-    color: #333;
-    margin-bottom: 8px;
-}
-
-#subtitulo {
-    font-size: 18px;
-    color: #666;
     margin-bottom: 30px;
 }
 
-/* Formulário */
+/* Formulários */
 form {
-    background-color: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: 100%;
 }
 
 fieldset.grupo {
     margin-bottom: 25px;
     border: none;
-    text-align: left;
+    padding: 0;
 }
 
 legend {
     font-weight: bold;
-    font-size: 18px;
-    color: #444;
-    margin-bottom: 10px;
+    font-size: 1.2em;
+    color: #1d3557;
+    margin-bottom: 15px;
     padding-bottom: 5px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 2px solid #457b9d;
     width: 100%;
 }
 
 /* Labels e Inputs */
 label {
     display: block;
-    margin-bottom: 6px;
-    margin-top: 15px;
+    margin-bottom: 8px;
     font-weight: 500;
-    color: #333;
 }
 
 input[type="text"],
 input[type="tel"],
 input[type="date"],
+input[type="number"],
+input[type="password"],
+textarea,
 select {
     width: 100%;
     padding: 10px;
-    font-size: 1rem;
+    font-size: 1em;
     border: 1px solid #ccc;
-    border-radius: 6px;
-    transition: border-color 0.3s ease;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
 }
 
 input:focus,
+textarea:focus,
 select:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: #457b9d;
 }
 
-/* Campo CEP */
-#cep {
-    max-width: 250px;
+textarea {
+    resize: vertical;
+    min-height: 80px;
 }
 
-/* Radios */
-.opcoes {
-    margin-top: 8px;
-}
-
-.opcoes label {
-    display: inline-block;
-    margin-right: 20px;
-    font-weight: normal;
-    color: #555;
-    margin-top: 0; /* Reseta a margem para labels de radio */
-}
-
-/* Botão */
-.botao {
-    background-color: #007bff;
-    color: white;
-    border: none;
+/* Botões */
+.botao, .btn-primary, .btn-secondary, .btn-danger {
     padding: 12px 20px;
-    font-size: 16px;
-    border-radius: 6px;
+    border: none;
+    border-radius: 5px;
     cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.botao, .btn-primary {
+    background-color: #457b9d;
+    color: white;
+}
+
+.botao:hover, .btn-primary:hover {
+    background-color: #1d3557;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+}
+
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
     margin-top: 20px;
-    transition: background-color 0.3s ease;
 }
 
-.botao:hover {
-    background-color: #0056b3;
-}
-
-/* ================================================= */
-/* === CSS PARA A SEÇÃO DE SINTOMAS (ADICIONADO) === */
-/* ================================================= */
-
-/* Grid para organizar os sintomas */
+/* Grid de Sintomas */
 .sintoma-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 15px;
-    margin-top: 10px;
 }
 
-/* Container para cada item de sintoma (checkbox + slider) */
 .sintoma-item-wrapper {
     border: 1px solid #e0e0e0;
     padding: 15px;
     border-radius: 8px;
-    background-color: #fafafa;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+    background-color: #f8f9fa;
 }
 
-/* Alinha o checkbox e seu texto */
 .sintoma-checkbox-container {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
+    margin-bottom: 10px;
 }
 
-/* Remove a margem extra do label dentro do container do checkbox */
 .sintoma-checkbox-container label {
-    margin: 0;
     font-weight: 500;
     cursor: pointer;
 }
 
-input[type="checkbox"] {
-    width: 18px;
-    height: 18px;
-    margin-top: 0;
-}
-
-/* Container para o slider de gravidade */
 .gravidade-slider-container {
-    display: flex;
+    display: none; /* Oculto por padrão */
     align-items: center;
     gap: 10px;
-    margin-top: 5px;
 }
 
-/* Remove a margem extra do label do slider */
 .gravidade-slider-container label {
-    margin: 0;
-    font-size: 14px;
+    font-size: 0.9em;
     color: #555;
-    white-space: nowrap;
 }
 
-/* Estilo para o slider */
-.gravidade-slider-container input[type="range"] {
-    flex-grow: 1;
-    margin: 0;
-    padding: 0;
-}
-
-/* Mostra o valor da gravidade */
 .gravidade-value {
     font-weight: bold;
-    color: #007bff;
-    min-width: 20px;
-    text-align: center;
+    color: #1d3557;
 }
 
-/* Estilos para a tag <details> e <summary> */
+/* Details/Summary para Categorias */
 details {
     margin-bottom: 15px;
-    border: 1px solid #ddd;
+    border: 1px solid #dee2e6;
     border-radius: 8px;
     overflow: hidden;
-    text-align: left;
 }
 
 summary {
     font-weight: bold;
-    font-size: 1.1rem;
-    padding: 15px;
-    background-color: #f0f0f0;
+    font-size: 1.1em;
+    padding: 12px 15px;
+    background-color: #f8f9fa;
     cursor: pointer;
     outline: none;
-    list-style: none;
 }
 
-summary::before {
-    content: "▶";
-    margin-right: 10px;
-    display: inline-block;
-    transition: transform 0.2s;
+.details-content {
+    padding: 15px;
+    border-top: 1px solid #dee2e6;
 }
 
-details[open] > summary::before {
-    transform: rotate(90deg);
-}
-
-summary::-webkit-details-marker {
+/* Classes Utilitárias */
+.hidden {
     display: none;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-20 {
+    margin-top: 20px;
 }

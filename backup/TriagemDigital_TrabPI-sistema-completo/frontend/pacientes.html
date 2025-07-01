@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="style.css" />
+        <title>Triagem e Cadastro do Paciente</title>
+    </head>
+    <body>
+        <header>
+            <nav class="dropdown">
+                <button class="dropbtn">Menu</button>
+                <div class="dropdown-content">
+                    <a href="#">Triagem de Pacientes</a>
+                    <a href="#">Cadastro de Pacientes</a>
+                    <a href="#">Cadastro de Enfermeiros</a>
+                </div>
+            </nav>
+        </header>
+        <main>
+            <section>
+                <h1 id="titulo">Triagem do Paciente</h1>
+                <p id="subtitulo">Preencha as informações e sintomas</p>
+            </section>
+
+            <form id="form" method="post">
+                <!-- Informações Pessoais -->
+                <fieldset class="grupo">
+                    <legend>Informações Pessoais</legend>
+                    <label for="nome">Nome Completo</label>
+                    <input type="text" name="nome" id="nome" required />
+                    <label>Gênero</label>
+                    <div class="opcoes">
+                        <label><input type="radio" name="genero" value="feminino" checked /> Feminino</label>
+                        <label><input type="radio" name="genero" value="masculino" /> Masculino</label>
+                        <label><input type="radio" name="genero" value="outro" /> Outro</label>
+                        <label><input type="radio" name="genero" value="nao_informar" /> Prefiro não informar</label>
+                    </div>
+                    <label for="cpf">CPF</label>
+                    <input type="text" name="cpf" id="cpf" maxlength="14" required onblur="buscarPacientePorCPF()" />
+                    <label for="telefone">Telefone</label>
+                    <input type="tel" name="telefone" id="telefone" placeholder="(35) 99999-9999" required />
+                    <label for="nascimento">Data de Nascimento</label>
+                    <input type="date" name="nascimento" id="nascimento" required />
+                </fieldset>
+
+                <!-- Endereço -->
+                <fieldset class="grupo">
+                    <legend>Endereço</legend>
+                    <label for="cep">CEP</label>
+                    <input type="text" name="cep" id="cep" placeholder="00000-000" maxlength="9" required />
+                </fieldset>
+
+                <!-- Sintomas (Gerados Dinamicamente) -->
+                <fieldset class="grupo">
+                    <legend>Sintomas</legend>
+                    <div id="sintomasCategorias"></div>
+                </fieldset>
+
+                <div>
+                    <button type="submit" class="botao">Cadastrar e Classificar</button>
+                </div>
+            </form>
+        </main>
+
+        <script src="src/integracao_api.js"></script>
+
+        <script>
+            const sintomasPorCategoria = {
+                "Sinais de Alerta Imediato": ["Dificuldade para Respirar", "Dor no Peito", "Alteração de Consciência", "Convulsão ou Ataque Epilético", "Sangramento Excessivo"],
+                "Sintomas Gerais": ["Febre", "Cansaço", "Fadiga", "Tontura", "Mal-estar Geral", "Perda de Apetite", "Insônia"],
+                Dor: ["Dor de Cabeça", "Dor Abdominal", "Dor nas Costas", "Dor nas Articulações", "Dor de Garganta", "Dor de Dente"],
+                "Sintomas Neurológicos e Psicológicos": ["Trauma na Cabeça", "Confusão Mental", "Ansiedade ou Pânico"],
+                "Sintomas Gastrointestinais": ["Vômito", "Diarreia", "Náusea"],
+                Outros: ["Pressão Alta", "Queimadura", "Reação Alérgica"],
+            };
+
+            const sintomasCategoriasDiv = document.getElementById("sintomasCategorias");
+
+            function criarSecoesDeSintomas() {
+                for (const categoria in sintomasPorCategoria) {
+                    const details = document.createElement("details");
+                    if (categoria === "Sinais de Alerta Imediato") details.open = true;
+
+                    const summary = document.createElement("summary");
+                    summary.textContent = categoria;
+                    details.appendChild(summary);
+
+                    const sintomaGrid = document.createElement("div");
+                    sintomaGrid.classList.add("sintoma-grid");
+                    details.appendChild(sintomaGrid);
+
+                    sintomasPorCategoria[categoria].forEach((sintomaNome) => {
+                        const wrapper = document.createElement("div");
+                        wrapper.classList.add("sintoma-item-wrapper");
+
+                        const checkbox = document.createElement("input");
+                        checkbox.type = "checkbox";
+                        checkbox.id = `sintoma-${sintomaNome.replace(/\s+/g, "-")}`;
+                        checkbox.name = "sintomas";
+                        checkbox.value = sintomaNome;
+
+                        const label = document.createElement("label");
+                        label.htmlFor = checkbox.id;
+                        label.textContent = sintomaNome;
+
+                        const checkboxContainer = document.createElement("div");
+                        checkboxContainer.classList.add("sintoma-checkbox-container");
+                        checkboxContainer.appendChild(checkbox);
+                        checkboxContainer.appendChild(label);
+                        wrapper.appendChild(checkboxContainer);
+
+                        const sliderContainer = document.createElement("div");
+                        sliderContainer.classList.add("gravidade-slider-container");
+                        sliderContainer.style.display = "none";
+
+                        const sliderLabel = document.createElement("label");
+                        sliderLabel.textContent = "Gravidade (1-10):";
+
+                        const slider = document.createElement("input");
+                        slider.type = "range";
+                        slider.min = "1";
+                        slider.max = "10";
+                        slider.value = "5";
+                        slider.id = `gravidade-${sintomaNome.replace(/\s+/g, "-")}`;
+                        slider.name = `gravidade-${sintomaNome.replace(/\s+/g, "-")}`;
+
+                        const gravidadeValueSpan = document.createElement("span");
+                        gravidadeValueSpan.classList.add("gravidade-value");
+                        gravidadeValueSpan.textContent = slider.value;
+
+                        slider.addEventListener("input", () => {
+                            gravidadeValueSpan.textContent = slider.value;
+                        });
+
+                        sliderContainer.appendChild(sliderLabel);
+                        sliderContainer.appendChild(slider);
+                        sliderContainer.appendChild(gravidadeValueSpan);
+                        wrapper.appendChild(sliderContainer);
+
+                        checkbox.addEventListener("change", () => {
+                            if (checkbox.checked) {
+                                sliderContainer.style.display = "flex";
+                            } else {
+                                sliderContainer.style.display = "none";
+                                slider.value = "5";
+                                gravidadeValueSpan.textContent = "5";
+                            }
+                        });
+
+                        sintomaGrid.appendChild(wrapper);
+                    });
+
+                    sintomasCategoriasDiv.appendChild(details);
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", criarSecoesDeSintomas);
+        </script>
+    </body>
+</html>

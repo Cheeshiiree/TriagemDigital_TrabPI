@@ -1,0 +1,32 @@
+### O que é um Sistema Especialista?
+
+Um Sistema Especialista (SE) é um programa de computador que emula a capacidade de tomada de decisão de um especialista humano em um domínio específico. Ele faz isso através da manipulação de conhecimento e da aplicação de regras de inferência para resolver problemas complexos, oferecer conselhos ou diagnosticar situações.
+
+### Componentes Chave de um Sistema Especialista:
+
+1.  **Base de Conhecimento (Knowledge Base):**
+    *   Contém o conhecimento do domínio, geralmente na forma de fatos e regras "se-então" (IF-THEN). Este conhecimento é adquirido de especialistas humanos.
+    *   **No Protótipo "Triagem Digital":** A base de conhecimento é composta pelas regras e informações médicas que guiam o processo de triagem. Por exemplo, regras que associam sintomas a possíveis condições de saúde, e regras que determinam a prioridade de atendimento com base na gravidade dos sintomas relatados pelo paciente de acordo com o MTS. Isso pode ser implementado através de conjuntos de regras lógicas, no backend da aplicação.
+
+2.  **Máquina de Inferência (Inference Engine):**
+    *   É o "cérebro" do sistema. Ela processa o conhecimento da base de conhecimento para chegar a conclusões. Utiliza estratégias como encadeamento para frente (forward chaining - partindo dos fatos para as conclusões) ou encadeamento para trás (backward chaining - partindo de uma hipótese para buscar os fatos que a confirmam).
+    *   **No Protótipo "Triagem Digital":** A máquina de inferência é o algoritmo que, com base nas respostas do usuário (sintomas, histórico, etc.), navega pela base de conhecimento para determinar a classificação de risco do paciente e sugerir a próxima etapa. Ela interpreta as entradas e aplica as regras para inferir o resultado da triagem.
+
+3.  **Interface do Usuário (User Interface):**
+    *   Permite a interação entre o usuário (neste caso, o paciente ou um profissional de saúde) e o sistema. Deve ser intuitiva para facilitar a entrada de dados e a apresentação dos resultados.
+    *   **No Protótipo "Triagem Digital":** A interface do usuário é o frontend da aplicação onde o paciente insere seus sintomas e responde a perguntas. É através dela que o sistema coleta as informações necessárias para a triagem e exibe o resultado final e as recomendações.
+
+4.  **Módulo de Explicação (Explanation Facility - Opcional, mas desejável):**
+    *   Permite que o sistema explique o raciocínio por trás de suas conclusões. Isso aumenta a confiança do usuário no sistema.
+    *   **No Protótipo "Triagem Digital":** Embora possa ser uma funcionalidade mais avançada para um protótipo inicial, um módulo de explicação idealmente permitiria ao sistema justificar por que chegou a uma determinada classificação de risco. Por exemplo, "Você foi classificado como risco alto porque relatou dor no peito e dificuldade para respirar, que são sintomas associados a condições cardíacas graves."
+
+### Aplicação no Protótipo "Triagem Digital":
+
+O protótipo "Triagem Digital" busca simular um processo de triagem médica inicial, onde podem inserir seus sintomas e receber uma classificação de risco preliminar. O objetivo é otimizar o fluxo de atendimento em unidades de saúde, direcionando os pacientes para o nível de atenção adequado de forma mais eficiente.
+
+Ao integrar os conceitos de Sistema Especialista, o protótipo visa:
+*   **Automatizar a Triagem:** Reduzir a carga de trabalho inicial dos profissionais de saúde, permitindo que o sistema colete e processe informações básicas.
+*   **Padronizar a Avaliação:** Garantir que a triagem siga um conjunto consistente de regras.
+*   **Fornecer Recomendações Iniciais:** Orientar o paciente sobre a urgência de seu caso.
+
+Este projeto, desenvolvido no contexto da disciplina de Projeto Integrado, serve como uma introdução prática aos princípios da Inteligência Artificial e Engenharia de Software, demonstrando como sistemas baseados em conhecimento podem ser aplicados para resolver problemas do mundo real.

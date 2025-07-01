@@ -1,0 +1,41 @@
+### Backend
+
+O backend é uma **aplicação Flask** que fornece uma API REST para gerenciar dados de pacientes e realizar a triagem.
+
+-   **`app.py`**: Este é o arquivo principal da aplicação Flask. Ele define os seguintes endpoints da API:
+    -   `GET /pacientes`: Lista todos os pacientes cadastrados e seus históricos de sintomas.
+    -   `POST /paciente`: Cadastra um novo paciente e seus sintomas.
+    -   `GET /paciente/<cpf>`: Busca um paciente específico pelo seu CPF.
+-   **`sistema_especialista.py`**: Este arquivo contém a lógica principal do **sistema de triagem**, que é baseado no **Protocolo de Manchester**. Ele classifica os pacientes em cinco níveis de prioridade (Vermelho, Laranja, Amarelo, Verde, Azul) com base nos sintomas relatados e na gravidade de cada um.
+-   **`requirements.txt`**: Este arquivo lista as dependências Python para o backend, que são Flask, Flask-CORS e suas dependências.
+-   **Banco de Dados**: A aplicação utiliza um **banco de dados SQLite** (`banco.db`) para armazenar as informações dos pacientes e seus históricos de sintomas. O esquema do banco de dados é criado automaticamente quando a aplicação é iniciada.
+
+### Frontend
+
+O frontend consiste em vários arquivos HTML, CSS e JavaScript que criam a interface do usuário para interagir com o sistema.
+
+-   **`pacientes.html`**: Esta é a página principal para cadastrar novos pacientes e seus sintomas. Ela inclui um formulário com campos para informações pessoais, endereço e uma lista dinâmica de sintomas agrupados por categoria. Quando um sintoma é selecionado, um controle deslizante (slider) aparece para permitir que o usuário especifique a gravidade do sintoma.
+-   **`Sintomas.html`**: Esta página parece ser uma página independente para exibir sintomas, mas não está diretamente ligada a partir da página principal `pacientes.html`.
+-   **`Sintomas.js`**: Este arquivo contém a lógica JavaScript para a página `Sintomas.html`.
+-   **`enfermeiro.html`**: Esta página provavelmente se destina a enfermeiros ou outros profissionais de saúde para visualizar e gerenciar os dados dos pacientes.
+-   **`paciente.html`**: Esta página provavelmente se destina aos pacientes para visualizarem suas próprias informações.
+-   **`style.css`**, **`Sintomas.css`**, **`formatacao.css`**: Estes arquivos contêm os estilos CSS para as diferentes páginas.
+
+### Teste
+
+O diretório `teste` contém uma mistura de arquivos que parecem ser para fins de teste.
+
+-   **`db_teste/`**: Este diretório provavelmente contém um banco de dados de teste.
+-   **`teste2.py`**: Este é um script Python, mas seu propósito não fica imediatamente claro pelo nome do arquivo.
+-   **`pacientes.sql`**: Este arquivo contém instruções SQL para criar a tabela `pacientes`.
+
+### Resumo das Mudanças Recentes
+
+Com base na estrutura e no conteúdo dos arquivos, parece que as atualizações recentes se concentraram no seguinte:
+
+-   **Implementação do Protocolo de Manchester**: O arquivo `sistema_especialista.py` contém uma implementação detalhada do Protocolo de Manchester, que é um método amplamente utilizado para a triagem de pacientes em serviços de emergência.
+-   **Desenvolvimento da API Flask**: O arquivo `app.py` define uma API abrangente para gerenciar dados de pacientes e seus históricos de sintomas.
+-   **Criação de um Frontend Dinâmico**: A página `pacientes.html` usa JavaScript para gerar dinamicamente a lista de sintomas e os controles deslizantes de gravidade, proporcionando uma experiência de usuário mais interativa.
+-   **Integração com Banco de Dados**: A aplicação está agora totalmente integrada com um banco de dados SQLite, permitindo o armazenamento persistente dos dados dos pacientes.
+
+Em resumo, o projeto evoluiu de um simples formulário de entrada de dados para um sistema de triagem mais sofisticado, com uma clara separação entre o backend e o frontend.

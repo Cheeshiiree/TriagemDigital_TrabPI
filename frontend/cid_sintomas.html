@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciar CID e Sintomas</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <style>
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #1d3557;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input[type="text"],
+        .form-group textarea,
+        .form-group select {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        .form-group textarea {
+            resize: vertical;
+        }
+        .buttons-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn-primary,
+        .btn-secondary,
+        .btn-danger {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            margin: 0 5px;
+        }
+        .btn-primary {
+            background-color: #457b9d;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #1d3557;
+        }
+        .btn-secondary {
+            background-color: #f1faee;
+            color: #1d3557;
+            border: 1px solid #457b9d;
+        }
+        .btn-secondary:hover {
+            background-color: #e0e0e0;
+        }
+        .btn-danger {
+            background-color: #e63946;
+            color: white;
+        }
+        .btn-danger:hover {
+            background-color: #c03039;
+        }
+        .list-section {
+            margin-top: 40px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .list-item {
+            background-color: #f8f9fa;
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .list-item span {
+            flex-grow: 1;
+        }
+        .list-item .actions button {
+            margin-left: 10px;
+        }
+        .symptom-tag {
+            display: inline-block;
+            background-color: #a8dadc;
+            color: #1d3557;
+            padding: 5px 8px;
+            border-radius: 3px;
+            margin-right: 5px;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        .symptom-input-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .symptom-input-container input {
+            flex-grow: 1;
+        }
+        .symptom-list-display {
+            border: 1px solid #ccc;
+            padding: 10px;
+            min-height: 50px;
+            border-radius: 4px;
+            background-color: #fdfdfd;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div id="navbar-placeholder"></div>
+    </header>
+    <main>
+        <div class="container">
+            <h1>Gerenciar CID e Sintomas</h1>
+
+            <section>
+                <h2>Adicionar/Editar CID</h2>
+                <div class="form-group">
+                    <label for="cid-codigo">Código CID:</label>
+                    <input type="text" id="cid-codigo" placeholder="Ex: J11" required>
+                </div>
+                <div class="form-group">
+                    <label for="cid-descricao">Descrição CID:</label>
+                    <input type="text" id="cid-descricao" placeholder="Ex: Gripe (Influenza)" required>
+                </div>
+                <div class="form-group">
+                    <label for="cid-gravidade-padrao">Gravidade Padrão (1-10):</label>
+                    <input type="number" id="cid-gravidade-padrao" min="1" max="10" value="5">
+                </div>
+                <div class="form-group">
+                    <label>Sintomas Associados (separados por vírgula):</label>
+                    <textarea id="cid-sintomas-associados" rows="3" placeholder="Ex: Febre, Tosse, Dor de Garganta"></textarea>
+                </div>
+                <div class="buttons-container">
+                    <button id="btn-salvar-cid" class="btn-primary">Salvar CID</button>
+                    <button id="btn-limpar-cid-form" class="btn-secondary">Limpar Formulário</button>
+                </div>
+            </section>
+
+            <section class="list-section">
+                <h2>CIDs Cadastrados</h2>
+                <div id="cid-list">
+                    <!-- CIDs serão carregados aqui -->
+                </div>
+            </section>
+
+            <section class="list-section">
+                <h2>Adicionar/Editar Sintoma Avulso</h2>
+                <div class="form-group">
+                    <label for="sintoma-nome">Nome do Sintoma:</label>
+                    <input type="text" id="sintoma-nome" placeholder="Ex: Dor de Cabeça" required>
+                </div>
+                <div class="form-group">
+                    <label for="sintoma-categoria">Categoria do Sintoma:</label>
+                    <input type="text" id="sintoma-categoria" placeholder="Ex: Sintomas Gerais, Dor, Respiratório" required>
+                </div>
+                <div class="buttons-container">
+                    <button id="btn-salvar-sintoma" class="btn-primary">Salvar Sintoma</button>
+                    <button id="btn-limpar-sintoma-form" class="btn-secondary">Limpar Formulário</button>
+                </div>
+            </section>
+
+            <section class="list-section">
+                <h2>Sintomas Avulsos Cadastrados</h2>
+                <div id="sintoma-list">
+                    <!-- Sintomas serão carregados aqui -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const API_URL = 'http://127.0.0.1:5000';
+
+            // Navbar
+            fetch('src/navbar.html')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('navbar-placeholder').innerHTML = html;
+                    const nomeEnfermeiro = localStorage.getItem('enfermeiro_logado');
+                    if (nomeEnfermeiro) {
+                        document.getElementById('nome-enfermeiro').textContent = `Olá, ${nomeEnfermeiro}`;
+                    }
+                });
+
+            // CID Management
+            const cidCodigoInput = document.getElementById('cid-codigo');
+            const cidDescricaoInput = document.getElementById('cid-descricao');
+            const cidGravidadePadraoInput = document.getElementById('cid-gravidade-padrao');
+            const cidSintomasAssociadosInput = document.getElementById('cid-sintomas-associados');
+            const btnSalvarCid = document.getElementById('btn-salvar-cid');
+            const btnLimparCidForm = document.getElementById('btn-limpar-cid-form');
+            const cidListDiv = document.getElementById('cid-list');
+
+            let editingCidId = null;
+
+            async function loadCids() {
+                try {
+                    const response = await fetch(`${API_URL}/cids`);
+                    const cids = await response.json();
+                    cidListDiv.innerHTML = '';
+                    cids.forEach(cid => {
+                        const cidItem = document.createElement('div');
+                        cidItem.classList.add('list-item');
+                        cidItem.innerHTML = `
+                            <span><strong>${cid.codigo} - ${cid.descricao}</strong> (Gravidade Padrão: ${cid.gravidade_padrao})<br>
+                            Sintomas: ${cid.sintomas_associados.map(s => `<span class="symptom-tag">${s}</span>`).join('') || 'Nenhum'}</span>
+                            <div class="actions">
+                                <button class="btn-secondary" onclick="editCid(${cid.id}, '${cid.codigo}', '${cid.descricao}', ${cid.gravidade_padrao}, '${cid.sintomas_associados.join(', ')}')">Editar</button>
+                                <button class="btn-danger" onclick="deleteCid(${cid.id})">Excluir</button>
+                            </div>
+                        `;
+                        cidListDiv.appendChild(cidItem);
+                    });
+                } catch (error) {
+                    console.error('Erro ao carregar CIDs:', error);
+                    alert('Erro ao carregar CIDs.');
+                }
+            }
+
+            btnSalvarCid.addEventListener('click', async () => {
+                const codigo = cidCodigoInput.value;
+                const descricao = cidDescricaoInput.value;
+                const gravidade_padrao = parseInt(cidGravidadePadraoInput.value);
+                const sintomas_associados = cidSintomasAssociadosInput.value.split(',').map(s => s.trim()).filter(s => s !== '');
+
+                if (!codigo || !descricao || isNaN(gravidade_padrao)) {
+                    alert('Por favor, preencha todos os campos obrigatórios para o CID.');
+                    return;
+                }
+
+                const cidData = {
+                    codigo,
+                    descricao,
+                    gravidade_padrao,
+                    sintomas_associados
+                };
+
+                try {
+                    let response;
+                    if (editingCidId) {
+                        response = await fetch(`${API_URL}/cids/${editingCidId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(cidData)
+                        });
+                    } else {
+                        response = await fetch(`${API_URL}/cids`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(cidData)
+                        });
+                    }
+
+                    if (response.ok) {
+                        alert('CID salvo com sucesso!');
+                        clearCidForm();
+                        loadCids();
+                    } else {
+                        const errorData = await response.json();
+                        alert(`Erro ao salvar CID: ${errorData.message}`);
+                    }
+                } catch (error) {
+                    console.error('Erro ao salvar CID:', error);
+                    alert('Erro ao conectar com o servidor para salvar CID.');
+                }
+            });
+
+            btnLimparCidForm.addEventListener('click', clearCidForm);
+
+            function clearCidForm() {
+                cidCodigoInput.value = '';
+                cidDescricaoInput.value = '';
+                cidGravidadePadraoInput.value = '5';
+                cidSintomasAssociadosInput.value = '';
+                editingCidId = null;
+                btnSalvarCid.textContent = 'Salvar CID';
+            }
+
+            window.editCid = (id, codigo, descricao, gravidade_padrao, sintomas_associados_str) => {
+                editingCidId = id;
+                cidCodigoInput.value = codigo;
+                cidDescricaoInput.value = descricao;
+                cidGravidadePadraoInput.value = gravidade_padrao;
+                cidSintomasAssociadosInput.value = sintomas_associados_str;
+                btnSalvarCid.textContent = 'Atualizar CID';
+            };
+
+            window.deleteCid = async (id) => {
+                if (!confirm('Tem certeza que deseja excluir este CID?')) return;
+                try {
+                    const response = await fetch(`${API_URL}/cids/${id}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        alert('CID excluído com sucesso!');
+                        loadCids();
+                    } else {
+                        const errorData = await response.json();
+                        alert(`Erro ao excluir CID: ${errorData.message}`);
+                    }
+                } catch (error) {
+                    console.error('Erro ao excluir CID:', error);
+                    alert('Erro ao conectar com o servidor para excluir CID.');
+                }
+            };
+
+            // Symptom Management
+            const sintomaNomeInput = document.getElementById('sintoma-nome');
+            const sintomaCategoriaInput = document.getElementById('sintoma-categoria');
+            const btnSalvarSintoma = document.getElementById('btn-salvar-sintoma');
+            const btnLimparSintomaForm = document.getElementById('btn-limpar-sintoma-form');
+            const sintomaListDiv = document.getElementById('sintoma-list');
+
+            let editingSintomaId = null;
+
+            async function loadSintomas() {
+                try {
+                    const response = await fetch(`${API_URL}/sintomas`);
+                    const sintomas = await response.json();
+                    sintomaListDiv.innerHTML = '';
+                    sintomas.forEach(sintoma => {
+                        const sintomaItem = document.createElement('div');
+                        sintomaItem.classList.add('list-item');
+                        sintomaItem.innerHTML = `
+                            <span><strong>${sintoma.nome}</strong> (Categoria: ${sintoma.categoria})</span>
+                            <div class="actions">
+                                <button class="btn-secondary" onclick="editSintoma(${sintoma.id}, '${sintoma.nome}', '${sintoma.categoria}')">Editar</button>
+                                <button class="btn-danger" onclick="deleteSintoma(${sintoma.id})">Excluir</button>
+                            </div>
+                        `;
+                        sintomaListDiv.appendChild(sintomaItem);
+                    });
+                } catch (error) {
+                    console.error('Erro ao carregar sintomas:', error);
+                    alert('Erro ao carregar sintomas.');
+                }
+            }
+
+            btnSalvarSintoma.addEventListener('click', async () => {
+                const nome = sintomaNomeInput.value;
+                const categoria = sintomaCategoriaInput.value;
+
+                if (!nome || !categoria) {
+                    alert('Por favor, preencha todos os campos obrigatórios para o sintoma.');
+                    return;
+                }
+
+                const sintomaData = {
+                    nome,
+                    categoria
+                };
+
+                try {
+                    let response;
+                    if (editingSintomaId) {
+                        response = await fetch(`${API_URL}/sintomas/${editingSintomaId}`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(sintomaData)
+                        });
+                    } else {
+                        response = await fetch(`${API_URL}/sintomas`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(sintomaData)
+                        });
+                    }
+
+                    if (response.ok) {
+                        alert('Sintoma salvo com sucesso!');
+                        clearSintomaForm();
+                        loadSintomas();
+                    } else {
+                        const errorData = await response.json();
+                        alert(`Erro ao salvar sintoma: ${errorData.message}`);
+                    }
+                } catch (error) {
+                    console.error('Erro ao salvar sintoma:', error);
+                    alert('Erro ao conectar com o servidor para salvar sintoma.');
+                }
+            });
+
+            btnLimparSintomaForm.addEventListener('click', clearSintomaForm);
+
+            function clearSintomaForm() {
+                sintomaNomeInput.value = '';
+                sintomaCategoriaInput.value = '';
+                editingSintomaId = null;
+                btnSalvarSintoma.textContent = 'Salvar Sintoma';
+            }
+
+            window.editSintoma = (id, nome, categoria) => {
+                editingSintomaId = id;
+                sintomaNomeInput.value = nome;
+                sintomaCategoriaInput.value = categoria;
+                btnSalvarSintoma.textContent = 'Atualizar Sintoma';
+            };
+
+            window.deleteSintoma = async (id) => {
+                if (!confirm('Tem certeza que deseja excluir este sintoma?')) return;
+                try {
+                    const response = await fetch(`${API_URL}/sintomas/${id}`, {
+                        method: 'DELETE'
+                    });
+                    if (response.ok) {
+                        alert('Sintoma excluído com sucesso!');
+                        loadSintomas();
+                    } else {
+                        const errorData = await response.json();
+                        alert(`Erro ao excluir sintoma: ${errorData.message}`);
+                    }
+                } catch (error) {
+                    console.error('Erro ao excluir sintoma:', error);
+                    alert('Erro ao conectar com o servidor para excluir sintoma.');
+                }
+            };
+
+            // Initial loads
+            loadCids();
+            loadSintomas();
+        });
+    </script>
+</body>
+</html>

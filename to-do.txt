@@ -1,0 +1,26 @@
+1 - criar uma pagina inicial de entrada que seria como o login porem só lê o nome do enfermeiro para que possa inciar uma seção;
+
+2 - Padronizar a estilização de todas as paginas frontend;
+
+3 - Modificar na pág de triagem ela deve procura por cpf e caso já seja um paciente cadastrado recuperar informações do banco de dados tipo como era o "teste/sintomas.html" caso o paciente não for encontrado abrir a opção para o enfermeiro cadastrar ou não, caso o enfermeiro opte por cadastrar o paciente ai sim abra a aba para colocar todos os dados se por algum acaso for uma emergência e optar por não cadastrar somente abrir os mesmos campos mais importantes que aparecem para o paciente já castrado (Nome, CPF, Peso, Altura, data de nascimento(calcular automaticamente a idade), gênero), colete também a partir do próprio sistema o horário que foi gerado a ficha da triagem;
+
+4 - Na pag do paciente crie uma nova seção antes dos sintomas para registrar outras informações criticas como por exemplo, temperatura, pressão, alergias medicamentos, glicemia, spo2 e outras informações críticas tanto para o paciente quanto para o MTS.
+
+5 - Adaptar principalmente a pagina de pacientes/sintomas (e qualquer outra pagina que seja necessário) para corresponder a solicitação: "[Palestrante 2] (11:59 - 12:10)
+E alguma coisa muito essencial da gente colocar, só pra finalizar, uma coisa que necessariamente precisaria na visão de profissional?
+[Palestrante 1] (12:15 - 14:18)
+Deixa eu pensar aqui, ó. Porque, por exemplo, o que que acontece? Ali a gente vai ter a classificação o mais rápido possível.
+Então, é o básico das informações. Então, tem que ser um instrumento rápido, né? Poderia ser, por exemplo, assim, ó, só que vai dar trabalho isso?
+É, você colocar, por exemplo, assim, ó, quais são as principais demandas daqui do postinho? Sempre vem gestante, sempre vem fumante, sempre vem hipertenso, diabético e tal. Então, quando a gente lançasse o código, já aparecesse pra gente os sinais e sintomas, a gente desse só o tique pra poder clicar nos sinais.
+Então, ó, esse tá com gripe, tá com febre, tá com isso, tá com aquilo. E já colocar a cor, ele já meio que estabilizar a cor, né, mediante ao que apareceu e mandar. Porque, por exemplo, se fosse uma COVID.
+Tem o COVID que ele é assintomático, ele tá só com nariz correnta, sem paladar, nem sem olfato. Mas tem um COVID que chega dessaturando. Então, eu não posso ter a mesma classificação de risco para os dois pacientes pelo diagnóstico.
+Então, eu acho que o instrumento tem que ser bem criterioso nesse sentido, de separar a gravidade. Isso que eu acho que é importante. Aí evita da gente fazer a digitação da consulta, né.
+Isso, eu acho que o mais é opções de clicar e tchau, ao invés da gente ter que ficar digitando. Só que, ao mesmo tempo, tem que ter um campo pra gente colocar quando o paciente é agressivo com a gente, quando ele não aceita a triagem que acontece, essas questões. Porque o fluxo enxerga que o paciente chega, é triado e vai pro atendimento.
+Só que tem paciente que não quer esperar, tem paciente que tá em surto, tem paciente que é agressivo. Então, o PEC acaba sendo um instrumento de proteção também para o profissional, pra gente não sofrer agressões, pra gente se respaldar legalmente. Então, isso também é muito importante de vocês se atentarem quando elaborar um instrumento.
+Um instrumento que seja eficaz e respalde o trabalho do profissional."
+
+6 - Organizar a nav bar para que fique utilizável pratica e presente em todas as paginas;
+
+7 - Adicionar funções que existiam no "teste/Sintomas.html" e que não existem na nova pagina de paciente, implemente o frontend o backend e se for preciso o banco de dados.
+
+8 - Verificar se as funções estão como as feitas pelo lucas na pasta "backup/" os arquivos que devem ser verificados são "integracao_api.js app.py sistema_especialista.py" pois as funcionaliaddes dessa versão estavam funcionando;
