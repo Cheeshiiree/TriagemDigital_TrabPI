@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Histórico do Paciente</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        header {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        h1 {
+            color: #1d3557;
+            margin: 0;
+        }
+        #info-paciente p {
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+        .historico-item {
+            border: 1px solid #eee;
+            border-left-width: 5px;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        .historico-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .historico-header h3 {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        .classificacao-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .sintomas-lista {
+            list-style: none;
+            padding-left: 0;
+        }
+        .sintomas-lista li {
+            background-color: #f8f9fa;
+            padding: 8px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+        }
+        .btn-voltar {
+            display: inline-block;
+            margin-top: 20px;
+            background-color: #457b9d;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .btn-voltar:hover {
+            background-color: #1d3557;
+        }
+
+        /* Cores do Protocolo de Manchester */
+        .border-vermelho { border-left-color: #d62828; }
+        .bg-vermelho { background-color: #d62828; }
+
+        .border-laranja { border-left-color: #f77f00; }
+        .bg-laranja { background-color: #f77f00; }
+
+        .border-amarelo { border-left-color: #fca311; }
+        .bg-amarelo { background-color: #fca311; }
+
+        .border-verde { border-left-color: #2a9d8f; }
+        .bg-verde { background-color: #2a9d8f; }
+
+        .border-azul { border-left-color: #0077b6; }
+        .bg-azul { background-color: #0077b6; }
+    </style>
+</head>
+<body>
+    <header>
+        <div id="navbar-placeholder"></div>
+    </header>
+    <div class="container">
+        <header>
+            <h1>Histórico de Atendimentos</h1>
+        </header>
+
+            <section id="info-paciente">
+                <!-- Informações do paciente serão inseridas aqui -->
+            </section>
+
+            <hr>
+
+            <section id="historico-lista">
+                <!-- Itens do histórico serão inseridos aqui -->
+            </section>
+
+            <a href="painel_triagem.html" class="btn-voltar">Voltar ao Painel</a>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const API_URL = 'http://127.0.0.1:5000/pacientes';
+            const infoPacienteDiv = document.getElementById('info-paciente');
+            const historicoListaDiv = document.getElementById('historico-lista');
+
+            const prioridadeMap = {
+                "Emergência": { cor: 'vermelho' },
+                "Muito Urgente": { cor: 'laranja' },
+                "Urgente": { cor: 'amarelo' },
+                "Pouco Urgente": { cor: 'verde' },
+                "Não Urgente": { cor: 'azul' }
+            };
+
+            function getCPFFromURL() {
+                const params = new URLSearchParams(window.location.search);
+                return params.get('cpf');
+            }
+
+            async function carregarHistorico() {
+                const cpf = getCPFFromURL();
+                if (!cpf) {
+                    infoPacienteDiv.innerHTML = '<p style="color: red;">CPF do paciente não fornecido na URL.</p>';
+                    return;
+                }
+
+                try {
+                    const response = await fetch(API_URL);
+                    if (!response.ok) throw new Error(`Erro na API: ${response.statusText}`);
+                    
+                    const pacientes = await response.json();
+                    const paciente = pacientes.find(p => p.cpf === cpf);
+
+                    if (!paciente) {
+                        throw new Error('Paciente não encontrado.');
+                    }
+
+                    renderInfosPaciente(paciente);
+                    renderHistorico(paciente.historico_triagens);
+
+                } catch (error) {
+                    infoPacienteDiv.innerHTML = `<p style="color: red;">Erro ao carregar histórico: ${error.message}</p>`;
+                    console.error("Erro ao buscar histórico:", error);
+                }
+            }
+
+            function renderInfosPaciente(paciente) {
+                infoPacienteDiv.innerHTML = `
+                    <p><strong>Nome:</strong> ${paciente.nome}</p>
+                    <p><strong>CPF:</strong> ${paciente.cpf}</p>
+                    <p><strong>Data de Nascimento:</strong> ${new Date(paciente.nascimento).toLocaleDateString('pt-BR')}</p>
+                `;
+            }
+
+            function renderHistorico(historico) {
+                if (historico.length === 0) {
+                    historicoListaDiv.innerHTML = '<p>Nenhum histórico de atendimento encontrado para este paciente.</p>';
+                    return;
+                }
+
+                historicoListaDiv.innerHTML = ''; // Limpa a lista
+
+                historico.forEach(item => {
+                    const classificacao = item.classificacao;
+                    const cor = prioridadeMap[classificacao.prioridade].cor;
+
+                    const sintomasHTML = item.sintomas_registrados.map(s => 
+                        `<li>${s.nome} (Gravidade: ${s.gravidade})</li>`
+                    ).join('');
+
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = `historico-item border-${cor}`;
+                    itemDiv.innerHTML = `
+                        <div class="historico-header">
+                            <h3>Data: ${new Date(item.data_do_registro).toLocaleString('pt-BR')}</h3>
+                            <span class="classificacao-badge bg-${cor}">${classificacao.prioridade}</span>
+                        </div>
+                        <p><strong>Sintomas Apresentados:</strong></p>
+                        <ul class="sintomas-lista">
+                            ${sintomasHTML}
+                        </ul>
+                    `;
+                    historicoListaDiv.appendChild(itemDiv);
+                });
+            }
+
+            carregarHistorico();
+
+            // Load navbar
+            fetch('src/navbar.html')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('navbar-placeholder').innerHTML = html;
+                });
+        });
+    </script>
+
+</body>
+</html>

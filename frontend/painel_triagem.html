@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Triagem - Fila de Atendimento</title>
+    <link rel="stylesheet" href="style.css"> 
+</head>
+<body>
+
+    <header>
+        <div id="navbar-placeholder"></div>
+        <h1>Painel de Triagem</h1>
+        <p>Pacientes aguardando atendimento, ordenados por prioridade.</p>
+        <a href="triagem.html" class="btn-primary" style="text-decoration: none; padding: 10px 20px; background-color: #4CAF50; color: white; border-radius: 5px;">Iniciar Nova Triagem</a>
+    </header>
+
+    <main>
+        <div id="fila-pacientes">
+            <!-- Cards dos pacientes serão inseridos aqui via JavaScript -->
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const API_URL = 'http://127.0.0.1:5000/pacientes';
+            const filaDiv = document.getElementById('fila-pacientes');
+
+            const prioridadeMap = {
+                "Emergência": { valor: 1, cor: 'vermelho' },
+                "Muito Urgente": { valor: 2, cor: 'laranja' },
+                "Urgente": { valor: 3, cor: 'amarelo' },
+                "Pouco Urgente": { valor: 4, cor: 'verde' },
+                "Não Urgente": { valor: 5, cor: 'azul' }
+            };
+
+            async function carregarFila() {
+                try {
+                    const response = await fetch(API_URL);
+                    if (!response.ok) {
+                        throw new Error(`Erro na API: ${response.statusText}`);
+                    }
+                    const pacientes = await response.json();
+
+                    // Filtra e ordena os pacientes
+                    const pacientesOrdenados = pacientes
+                        .filter(p => p.historico_sintomas && p.historico_sintomas.length > 0)
+                        .sort((a, b) => {
+                            const prioridadeA = prioridadeMap[a.historico_sintomas[0].classificacao.prioridade].valor;
+                            const prioridadeB = prioridadeMap[b.historico_sintomas[0].classificacao.prioridade].valor;
+                            if (prioridadeA !== prioridadeB) {
+                                return prioridadeA - prioridadeB;
+                            }
+                            // Se a prioridade for a mesma, ordena pelo mais antigo
+                            return new Date(a.historico_sintomas[0].data_do_registro) - new Date(b.historico_sintomas[0].data_do_registro);
+                        });
+
+                    renderFila(pacientesOrdenados);
+
+                } catch (error) {
+                    filaDiv.innerHTML = `<p style="color: red;">Não foi possível carregar a fila de pacientes. Verifique se o backend está rodando. Erro: ${error.message}</p>`;
+                    console.error("Erro ao buscar pacientes:", error);
+                }
+            }
+
+            function renderFila(pacientes) {
+                if (pacientes.length === 0) {
+                    filaDiv.innerHTML = '<p>Nenhum paciente aguardando na fila.</p>';
+                    return;
+                }
+
+                filaDiv.innerHTML = ''; // Limpa a fila antes de renderizar
+
+                pacientes.forEach(paciente => {
+                    const ultimoHistorico = paciente.historico_sintomas[0];
+                    const classificacao = ultimoHistorico.classificacao;
+                    const cor = prioridadeMap[classificacao.prioridade].cor;
+
+                    const card = document.createElement('div');
+                    card.className = 'paciente-card';
+                    card.innerHTML = `
+                        <div class="card-header prioridade-${cor}">
+                            ${classificacao.cor} ${classificacao.prioridade}
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Paciente:</strong> ${paciente.nome}</p>
+                            <p><strong>CPF:</strong> ${paciente.cpf}</p>
+                            <p><strong>Chegada:</strong> ${new Date(ultimoHistorico.data_do_registro).toLocaleString('pt-BR')}</p>
+                            <p><strong>Tempo de Espera Sugerido:</strong> ${classificacao.tempo_espera}</p>
+                        </div>
+                        <div class="card-footer">
+                            <a href="historico_paciente.html?cpf=${paciente.cpf}" class="btn-historico">Ver Histórico</a>
+                        </div>
+                    `;
+                    filaDiv.appendChild(card);
+                });
+            }
+
+            carregarFila();
+            // Atualiza a fila a cada 30 segundos
+            setInterval(carregarFila, 30000);
+
+            // Lógica da Navbar
+            const nomeEnfermeiro = localStorage.getItem('enfermeiro_logado');
+            if (nomeEnfermeiro) {
+                document.getElementById('nome-enfermeiro').textContent = `Olá, ${nomeEnfermeiro}`;
+            }
+
+            document.getElementById('logout-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('enfermeiro_logado');
+                window.location.href = 'login.html';
+            });
+
+            // Load navbar
+            fetch('src/navbar.html')
+                .then(response => response.text())
+                .then(html => {
+                    document.getElementById('navbar-placeholder').innerHTML = html;
+                });
+        });
+    </script>
+
+</body>
+</html>
